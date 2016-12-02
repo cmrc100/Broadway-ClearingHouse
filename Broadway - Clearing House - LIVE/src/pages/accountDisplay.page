@@ -1,0 +1,28 @@
+<apex:page StandardController="Account" >
+
+    <p>Hello {!$User.FirstName}!</p>
+    <p>You are viewing the {!account.name} account. </p>
+    <p>This account was created by {!account.createdby.name}. </p>
+    <p>{!account.createdby.name}'s job title is {!account.createdby.title}. </p>
+   
+
+    
+    <apex:detail relatedList="false"/>
+    <apex:relatedList list="contacts"/>
+
+    <apex:pageBlock title="Custome Output">
+        <apex:pageblocksection title="Custome Section Title">
+            <apex:outputField value="{!account.name}"/>
+            <apex:outputField value="{!account.createdby.name}"/>
+            <apex:outputField value="{!account.createdby.title}"/>
+        </apex:pageblocksection>
+    </apex:pageBlock>
+    
+    <apex:pageblock title="My Account Contacts">
+        <apex:pageblockTable value="{!account.contacts}" var="item">
+            <apex:column value="{!item.name}"/>
+            <apex:column value="{!item.CHAIN_number__c}"/>
+        </apex:pageblockTable>
+    </apex:pageblock>
+
+</apex:page>

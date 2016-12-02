@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>Enable_Title_Tracking__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <description>When enabled, a Former Position record will be created when a contact&apos;s Title changes.</description>
+        <externalId>false</externalId>
+        <label>Enable Title Tracking</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>Former Positions Settings</label>
+    <visibility>Public</visibility>
+</CustomObject>

@@ -1,0 +1,32 @@
+<apex:page standardController="Referral__c" tabStyle="Referral__c">
+
+    <script type="text/javascript">
+        window.onload = function(){
+           var date = '{!Referral__c.Index_date__c}';
+           if (!date){
+               flowPanel.style.display='block';
+           } else {
+                flowPanel.style.display='none';
+                alert('The index for {!Referral__c.Client__r.Name} has already been submitted.');
+                window.history.back();           
+           
+           }
+        
+        }
+        
+    </script>
+    
+    
+    <!-- <flow:interview name="Index" finishLocation="{!URLFOR('/home/home.jsp')}" id="theFlow">  -->
+        <flow:interview name="Index" finishLocation="{!URLFOR('/' + Referral__c.Id)}" id="theFlow">
+        <apex:param name="ClientID" value="{!Referral__c.Client__c}"/>
+        <apex:param name="RecordTypeVariable" value="Transfer"/>
+        <apex:param name="ReferralID" value="{!Referral__c.Id}"/>
+        <apex:param name="RecordTypeDevName" value="{!Referral__c.RecordType.DeveloperName}"/>
+
+    </flow:interview>     
+     <script>
+        var flowPanel = document.getElementById('{!$Component.theFlow}');
+    </script>
+    
+</apex:page>

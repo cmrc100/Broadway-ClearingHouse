@@ -1,0 +1,5 @@
+<apex:page standardController="Task" tabStyle="Task" >
+    <flow:interview name="Close_Tasks" finishLocation="{!URLFOR('/home/home.jsp')}">
+        <apex:param name="TaskID" value="{!task.Id}"/>
+    </flow:interview>
+</apex:page>

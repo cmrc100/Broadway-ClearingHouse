@@ -1,0 +1,40 @@
+<apex:page standardController="account" showHeader="true" sidebar="true">
+
+<apex:detail subject="{!Account.Id}" showChatter="false" inlineEdit="true"/>
+
+    <style>
+      div.bodyDiv { background-color: pink; }
+    </style>
+
+
+
+    <apex:enhancedList type="Contact" height="350"/>
+    
+    <apex:pageBlock >
+    <style> p { color: red; } </style>
+    <P>test</p>
+        
+    </apex:pageBlock>
+    
+    <apex:relatedList id="Client" list="Contacts">
+    
+    <apex:facet name="header" >Clients referred by {!account.name}</apex:facet>
+
+    </apex:relatedList>
+
+    <apex:relatedList list="Cases" title="Or you can keep the image, but change the text" >
+
+    </apex:relatedList>
+
+    <apex:iframe src="/00O20000006WCPb"/>   
+
+
+   <apex:pageBlock title="Contacts">
+      <apex:pageBlockTable value="{!account.Contacts}" var="contact">
+         <apex:column value="{!contact.Name}"/>
+         <apex:column value="{!contact.MailingCity}"/>
+         <apex:column value="{!contact.Phone}"/>
+      </apex:pageBlockTable>
+   </apex:pageBlock>
+   
+</apex:page>

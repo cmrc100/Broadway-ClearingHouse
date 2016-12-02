@@ -1,0 +1,37 @@
+<apex:page id="thePage" standardController="Contact" extensions="IndexFlowController" 
+tabStyle="Contact">
+    
+    <script type="text/javascript">
+
+        window.onload = function(){
+            
+            if ("{!Contact.Current_referral__c}" == "" 
+                    || "{!Contact.Referral_status__c}" == "Rejected"
+                    || "{!Contact.Referral_status__c}" == "Cancelled" 
+                    || "{!Contact.Referral_status__c}" == "Expired" 
+                    || "{!Contact.Referral_status__c}" == "Tenancy ended"){
+                    
+                    flowPanel.style.display='block';
+            } else {
+                
+                flowPanel.style.display='none';
+                alert('{!Contact.Name} currently has an active referral on the Clearing House. If you have permission to access this referral click on the Current Referral link on this page otherwise please contact the Clearing House team.');
+                window.history.back();
+            }
+        }    
+    
+    </script>
+
+   <!--  <flow:interview name="Index" finishLocation="{!URLFOR('/home/home.jsp')}" id="theFlow">  -->
+   <flow:interview name="Index" finishLocation="{!ReferralPage}" interview="{!theflow}" id="theFlow">
+        <apex:param name="ClientID" value="{!Contact.Id}"/>
+        <apex:param name="RecordTypeVariable" value="Referral"/>
+        <apex:param name="ContactID" value="{!$User.ContactId}"/>    
+    </flow:interview>
+    <script>
+        var flowPanel = document.getElementById('{!$Component.theFlow}');
+    </script>
+              
+
+   
+</apex:page>

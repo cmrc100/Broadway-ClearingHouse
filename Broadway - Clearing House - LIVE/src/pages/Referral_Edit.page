@@ -1,0 +1,6 @@
+<apex:page standardController="Referral__c">
+    <apex:form >
+        <apex:commandButton action="{/003/e?retURL=a04&RecordType=012200000002xME}"  value=" Create New Client"/>
+    </apex:form>
+<apex:detail subject="{!id}" relatedList="true"/>
+</apex:page>

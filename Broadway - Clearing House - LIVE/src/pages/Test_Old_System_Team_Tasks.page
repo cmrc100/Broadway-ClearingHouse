@@ -1,0 +1,73 @@
+<apex:page >
+
+<head> 
+<script type="text/javascript" src="/js/functions.js"></script> 
+<script src="/soap/ajax/10.0/connection.js"></script> 
+<script type="text/javascript"> 
+function nullReplace(inString) { 
+if (inString==null) { 
+return ""; 
+} else { 
+return inString; 
+} 
+} 
+
+function resizeFrame() { 
+var sframe = parent.document.getElementById("teamtasks"); //get id of iframe from parent 
+var nHeight = document.body.scrollHeight; //use the returned height of sControl frame 
+//sframe.style.height = nHeight+"px"; //set the frame height to correspond to the content 
+} 
+
+function initPage() { 
+var chWebUser = "CH Website"; 
+sforce.connection.sessionId = "{!$Api.Session_ID}";
+var chWebUserTaskQuery = sforce.connection.query("select Id, What.Name, WhatId, Subject, ActivityDate, Owner.Name from Task where IsClosed = false and Owner.Name <> '" + chWebUser + "' and OwnerId <> '{!$User.Id}' order by ActivityDate", {onSuccess : success, onFailure : failure}); 
+resizeFrame(); 
+} 
+
+function failure(error) { 
+document.body.innerHTML = "An error has occurred: " + error; 
+resizeFrame(); 
+} 
+
+function success(result) { 
+lchWebUserTaskRecs = result.getArray("records"); 
+
+if (lchWebUserTaskRecs.length > 0) { 
+newHTML = '<DIV class="bPageBlock secondaryPalette"><div style="border-bottom: 1px solid #ffffff; background-color:#edebd0; border-right: 2px solid #638658;"><table><tr><td class="pbTitle" ><h3>CH Team Tasks Overview</h3></td></tr></table></div><DIV class="pbBody" style="padding-top: 0px;"><table class="list" style="border-top: 0px;" border="0" cellspacing="0" cellpadding="0"><tr class="headerRow"><th>Due</th><th>Owner</th><th>Subject</th><th>Related To</th></tr>'; 
+
+for (var i=0; i< lchWebUserTaskRecs.length; i++) { 
+var tskId = lchWebUserTaskRecs[i].get("Id"); 
+var tskDate = lchWebUserTaskRecs[i].get("ActivityDate"); 
+var tskSubject = lchWebUserTaskRecs[i].get("Subject"); 
+var tskRelID = lchWebUserTaskRecs[i].get("WhatId"); 
+var tskRelDesc = ''; 
+if (tskRelID!=null) tskRelDesc = lchWebUserTaskRecs[i].get("What").get("Name"); 
+var tskLinktoTask = '<a target="_top" href="/' + tskId + '">' + tskSubject + '</a>'; 
+var tskLinktoRel = '<a target="_top" href="/' + tskRelID + '">' + tskRelDesc + '</a>'; 
+var tskOwner = lchWebUserTaskRecs[i].get("Owner").get("Name"); 
+newHTML+= '<tr onmouseover="hiOn(this);" onmouseout="hiOff(this);"><td>' + tskDate + '</td><td>' + tskOwner + '</td><td>' + tskLinktoTask + '</td><td>' + tskLinktoRel + '</td></tr>'; 
+} 
+newHTML += '</table></div><div class="pbFooter secondaryPalette"><div class="bg"/></div></div></div>'; 
+} else { 
+newHTML="<b>No Team Tasks</b>"; 
+} 
+document.body.innerHTML = newHTML; 
+resizeFrame(); 
+} 
+
+</script> 
+</head> 
+<body class="home" style="background-color:#F3F3EC;"> 
+<table> 
+<tr> 
+<td><b>Searching for Team Tasks</b></td> 
+<td> 
+<img src="/img/waiting_dots.gif" alt="Please wait..." title="Please wait..." height="10" /> 
+</td> 
+</tr> 
+</table> 
+
+<script>initPage();</script> 
+</body> 
+</apex:page>

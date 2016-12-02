@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Former Positions</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <description>Former Positions tracks changes to a Contact&apos;s Account, enabling you to follow an individual&apos;s career. You can improve data quality by moving inactive contacts to a bucket account. The solution is like LinkedIn&apos;s Experience section of a profile.</description>
+    <namespacePrefix>FormPos</namespacePrefix>
+    <setupWeblink>Config</setupWeblink>
+    <types>
+        <members>FPPostInstallScript</members>
+        <members>TestContactHistory</members>
+        <members>TriggerMonitor</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Config</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>UpdateContactHistory</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>Contact.Current_Position_Start__c</members>
+        <members>Former_Position__c.Account__c</members>
+        <members>Former_Position__c.Contact__c</members>
+        <members>Former_Position__c.Current_Account__c</members>
+        <members>Former_Position__c.Duration__c</members>
+        <members>Former_Position__c.End_Date__c</members>
+        <members>Former_Position__c.Start_Date__c</members>
+        <members>Former_Position__c.Title__c</members>
+        <members>Former_Positions_Settings__c.Enable_Title_Tracking__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Former_Position__c</members>
+        <members>Former_Positions_Settings__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Config</members>
+        <name>CustomPageWebLink</name>
+    </types>
+    <types>
+        <members>Former_Position__c-Former Position Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Former_Positions_End_User</members>
+        <members>Former_Positions_Manager</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>35.0</version>
+</Package>

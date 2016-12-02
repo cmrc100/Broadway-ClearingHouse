@@ -1,0 +1,18 @@
+<apex:page standardController="Referral__c" extensions="HousingHistoryListController" >
+
+    <apex:pageBlock title="Five Year History">
+        <apex:pageBlockTable value="{!historyList}" var="h"> 
+            <apex:column headerValue="Record" >
+               <apex:outputLink value="/{!h['Id']}" target="_blank" >
+                   {!h['Name']}
+               </apex:outputLink>
+            </apex:column>
+            <apex:repeat value="{!HistoryFields}"  var="f"> 
+                <apex:column value="{!h[f.fieldPath]}"> 
+                </apex:column> 
+            </apex:repeat> 
+        </apex:pageBlockTable> 
+    </apex:pageBlock> 
+    
+
+</apex:page>

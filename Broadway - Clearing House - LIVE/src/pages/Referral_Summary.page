@@ -1,0 +1,145 @@
+<apex:page renderAs="PDF" standardController="Referral__c" extensions="ReferralSummaryController" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false"  >
+
+ <html>
+    <head>
+        <style  type="text/css" media="print">
+           
+            @page{
+                @bottom-left {                 
+                content: element(footer);     
+                }
+                @top-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family:"Arial Unicode MS";
+                font-size:11pt;
+                }
+                @top-left {
+                content: element(header);
+                }
+                size: A4 portrait;
+                margin-top:5cm;
+                margin-left:2.54cm;
+                margin-right:2.54cm;
+                margin-bottom:5cm; 
+            }
+            table {
+                -fs-table-paginate: paginate;
+                }
+             
+            div.footer {
+               display: block;
+               padding: 10px;                      
+               position: running(footer);
+               line-height: 10px;
+               z-index: 3;
+               color: #A9A9A9;
+               font-family:"Arial Unicode MS";
+               font-size:10.5pt;
+                          
+            }
+            div.header {
+               display: block;                     
+               position: running(header);
+                           
+            }
+            .container {
+               height: auto;
+               overflow: hidden;
+               position: relative;
+               page-break-after: always;
+            }
+            
+            .right {
+                margin-left:200px;
+                float: right;
+                clear: both;
+            }
+            
+            .left {
+                float: none; /* not needed, just for clarification */
+                /* the next props are meant to keep this block independent from the other floated one */
+                overflow: hidden;
+                position:fixed;
+                width:200px; 
+            }​​
+                      
+        </style>
+    </head>
+    <div class="header" >
+        <table table-layout="fixed">
+       <!--     <img src="{!URLFOR($Resource.HFSHeader)}" width="500" height="140"/> -->
+            
+        
+        </table>
+        
+        <apex:pageBlock >
+            
+            <apex:pageBlockSection columns="1" >
+            
+                <apex:repeat value="{!$ObjectType.Referral__c.FieldSets.Referral_Summary}" var="fld" >
+                    <apex:outputfield value="{!referralSummary.referral[fld]}" />
+                </apex:repeat>
+            
+            </apex:pageBlockSection>
+        
+        </apex:pageBlock>
+        <hr/>    
+        <hr/>
+    </div>
+
+    
+
+
+
+        
+    <body>
+
+    <apex:pageblock title="Assessment Summary">
+       <apex:repeat value="{!referralSummary}" var="ref">
+
+           
+            <apex:repeat value="{!ref.relatedGroupName}" var="grp">
+                <div class="container">                 
+                <apex:pageblocksection columns="1" >                        
+                    <apex:facet name="header">
+                        <span style="color:green;font-size:200%"><i><b>{!grp}</b></i></span>
+                        </apex:facet>     
+
+                    <br/>     
+                    <apex:repeat value="{!ref.relatedItems[grp]}" var="items">
+                        <apex:repeat value="{!items}" var="item">
+                            <apex:repeat value="{!referralSummary.relatedItemFieldMap[item.Id]}" var="f">                                       
+                                <apex:outputfield value="{!item[f]}" />
+                                <hr/>
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:repeat> 
+                </apex:pageblocksection>
+                </div>            
+            </apex:repeat>
+            <apex:pageBlockSection columns="1">
+                <apex:facet name="header">
+                    <span style="color:green;font-size:200%"><i><b>Five Year Housing History</b></i></span>
+                </apex:facet>     
+                    <br/>   
+                 <apex:dataTable value="{!ref.housingHistoryList}" var="h" border="2"  styleclass="table" >
+        
+                    <apex:repeat var="f" value="{!$ObjectType.Nomination_Tenancy__c.FieldSets.Housing_History_List}">
+                        <apex:column headerValue="{!f.label}">
+                            <apex:outputField value="{!h[f]}" />
+                        </apex:column>
+                    </apex:repeat>
+        
+        
+                </apex:dataTable>                                                
+            </apex:pageBlockSection>
+       </apex:repeat>
+    </apex:pageblock>
+
+    </body>
+
+    <div class="footer" >
+        ......................................................................................
+    </div>    
+</html>
+</apex:page>

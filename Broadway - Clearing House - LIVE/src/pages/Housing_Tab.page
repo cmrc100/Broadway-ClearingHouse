@@ -1,0 +1,17 @@
+<apex:page action="{!if($Profile.Name !='System Administrator', 
+    null, 
+    urlFor($Action.Nomination_Tenancy__c.Tab, 
+    $ObjectType.Nomination_Tenancy__c,
+    null, true))}"
+    
+  standardController="Nomination_Tenancy__c"
+  recordSetVar="Nomination_Tenancy"
+  tabStyle="Nomination_Tenancy__c" 
+  showHeader="true" 
+  tabstyle="Nomination_Tenancy__c" 
+  title="Housing">
+
+
+<apex:sectionheader title="Housing" subtitle="Home"></apex:sectionheader>
+    <apex:ListViews type="Nomination_Tenancy__c" />
+</apex:page>

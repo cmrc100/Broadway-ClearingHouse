@@ -1,0 +1,14 @@
+eclipse.preferences.version=1
+endpointApiVersion=37.0
+endpointEnvironment=Production/Developer Edition
+endpointServer=www.salesforce.com
+httpsProtocol=true
+ideVersion=35.0
+keependpoint=false
+metadataFormatVersion=35.0
+namespacePrefix=
+packageName=unpackaged
+preferToolingDeployment=true
+projectIdentifier=IDE6992574397897394887
+readTimeout=400
+username=constantine@clearinghouse.org

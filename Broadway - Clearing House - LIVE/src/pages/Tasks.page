@@ -1,0 +1,17 @@
+<apex:page standardController="Task">
+
+<flow:interview name="Close_Tasks"/>
+    
+
+    <apex:form >
+    
+
+   <apex:commandButton value="My Flow" onclick="/flow/Close_Tasks?TaskID={!Task.Id}"/>
+
+
+    </apex:form>
+  
+    
+    <apex:detail relatedList="false" title="false"/>
+
+</apex:page>

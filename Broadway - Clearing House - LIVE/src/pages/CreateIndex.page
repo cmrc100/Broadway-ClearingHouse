@@ -1,0 +1,70 @@
+<apex:page standardController="Nomination_Tenancy__c" tabStyle="Nomination_Tenancy__c" sidebar="false" >
+    
+    <script type="text/javascript">
+         window.onload = function(){
+
+            var start = normalizeDateExtended('{!$Setup.Global_Settings__c.Housing_Index_Start_Date__c}');
+            var end = normalizeDateExtended('{!$Setup.Global_Settings__c.Housing_Index_End_Date__c}');
+            var mostRecent = normalizeDateExtended('{!Nomination_Tenancy__c.Most_recent_index__r.Index_date__c}');
+            
+            var today = new Date();
+         
+            var dd = today.getDate();
+            var mm = today.getMonth()+1; //January is 0!
+            var yyyy = today.getFullYear();
+            
+            if(dd<10) {
+                dd='0'+dd
+            } 
+            
+            if(mm<10) {
+                mm='0'+mm
+            } 
+            
+            today = yyyy+mm+dd;
+
+            if (mostRecent != null){
+                if (mostRecent >= start && mostRecent <= end){
+                    flowPanel.style.display='none';
+                    alert('An index has already been submitted for this period. Please contact the Clearing House if you have any questions.');
+                    window.history.back();
+                } 
+            }
+            
+                                                
+            if (today >= start && today <= end){
+                    
+                    flowPanel.style.display='block';
+            } else {
+                
+                flowPanel.style.display='none';
+                alert('The index submission period is currently closed.  Please contact the Clearing House if you have any questions.');
+                window.history.back();
+            }
+                
+
+        }
+
+        function normalizeDateExtended(mydate){  
+           mydate = new Date(mydate);  
+           data = new Date(mydate - mydate.getTimezoneOffset() * 60000);  
+           var d = mydate.getDate();  
+           var m = mydate.getMonth()+1;  
+           var y = mydate.getFullYear();  
+           return ''+ y + (m<=9?'0'+m:m) + (d<=9?'0'+d:d) ; 
+        }  
+         
+    </script>
+        
+    <flow:interview name="Index" finishLocation="{!URLFOR('/a03?fcf=00B20000007xMpW')}" id="theFlow">
+    
+        <apex:param name="ClientID" value="{!Nomination_Tenancy__c.Client__c}"/>
+        <apex:param name="RecordTypeVariable" value="Index"/>
+        <apex:param name="TenancyID" value="{!Nomination_Tenancy__c.id}"/>
+  
+    </flow:interview>
+     <script>
+        var flowPanel = document.getElementById('{!$Component.theFlow}');
+    </script>    
+    
+</apex:page>

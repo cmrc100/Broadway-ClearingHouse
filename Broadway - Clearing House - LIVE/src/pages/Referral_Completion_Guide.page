@@ -1,0 +1,33 @@
+<apex:page standardController="Referral__c">
+
+<font size="4" color="ef4130"><strong> Referral Completion Guide </strong></font> 
+
+<br></br>
+
+<p>
+Create 5 years of <font color="ef4130"><strong>Housing History</strong></font> utilising the button at the top of the page.  Each accommodation stay must be saved as an individual record.
+
+<br></br>
+<br></br>
+
+Complete all 8 <font color="red"><strong>Assessments</strong></font> by clicking on the images below.  
+
+<br></br>
+
+<apex:image url="/servlet/servlet.FileDownload?file=01520000002e8P4" width="20" height="20"/> - assessment required  
+
+<br></br>
+
+<apex:image url="/servlet/servlet.FileDownload?file=01520000002e8Oz " width="20" height="20"/> - completed
+
+<br></br>
+
+<apex:image url="/servlet/servlet.FileDownload?file=01520000002eTPK" width="20" height="20"/>  - update required/referral not submitted 
+
+<br></br>
+
+<apex:image url="/servlet/servlet.FileDownload?file=01520000002eU0L" width="20" height="20"/>  - pending assessment    
+
+</p>
+
+</apex:page>

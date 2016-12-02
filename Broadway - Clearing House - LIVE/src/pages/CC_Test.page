@@ -1,0 +1,305 @@
+<apex:page renderAs="PDF" standardController="Referral__c" extensions="ReferralSummaryController" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false"   >
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS0121, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />  
+        <style  type="text/css" media="print">
+           
+            @page{
+                @bottom-left {                 
+                content: element(footer);     
+                }
+                @top-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family:"Arial Unicode MS";
+                font-size:11pt;
+                }
+                @top-left {
+                content: element(header);
+                }
+                size: A4 landscape;
+                margin-top:5cm;
+                margin-left:1.00cm;
+                margin-right:1.00cm;
+                margin-bottom:5cm; 
+            }
+            @media container{
+    html, body {
+        height: auto;    
+    }
+}
+            table {
+                -fs-table-paginate: paginate;
+                }
+             
+            div.footer {
+               display: block;
+               padding: 10px;                      
+               position: running(footer);
+               line-height: 10px;
+               z-index: 3;
+               color: #A9A9A9;
+               font-family:"Arial Unicode MS";
+               font-size:10.5pt;
+               page-break-before: avoid;
+                          
+            }
+            div.header {
+               display: block;                     
+               position: running(header);
+                           
+            }
+
+            .container {
+               height: auto;
+               overflow: hidden;
+               position: relative;
+               page-break-after: always;
+            }
+
+.container:last-child {
+     page-break-after: auto;
+}         
+            .right {
+                margin-left:200px;
+                float: right;
+                clear: both;
+            }
+            
+            .itemBlock{
+                page-break-inside:avoid; 
+            }
+            
+            .left {
+                float: none; /* not needed, just for clarification */
+                /* the next props are meant to keep this block independent from the other floated one */
+                overflow: hidden;
+                position:fixed;
+                width:200px; 
+            }​​
+
+
+            table.label{
+                vertical-align: top;
+                display: inline-block;
+            }
+          
+           
+            table.data td.data{
+                text-align: left;
+                font-size: 1.0em;
+                 vertical-align: text-top;
+                 top: 10px;
+            } 
+            
+.twoColumnGrid > .cell {
+    display: inline-block;
+    width: 50%;
+    vertical-align: text-top;
+}
+.col1 {width:50%; }
+    .col2 {width:50%;} 
+    
+    
+.fifty-percent {
+     width: 50%;
+}
+.top-alignment {
+     vertical-align: top;
+}
+#dataCol
+{
+   width:250px; /* or whatever width you want. */
+   max-width:250px; /* or whatever width you want. */
+   display: inline-block;
+}                                  
+        </style>
+    </head>
+    <div class="slds">
+    <div class="header" >
+        <table table-layout="fixed">
+       <!--     <img src="{!URLFOR($Resource.HFSHeader)}" width="500" height="140"/> -->
+            
+        
+        </table>
+        
+        <apex:pageBlock >
+            
+            <apex:pageBlockSection columns="1" >
+            
+                <apex:repeat value="{!$ObjectType.Referral__c.FieldSets.Referral_Summary}" var="fld" >
+                    <apex:outputfield value="{!referralSummary.referral[fld]}" />
+                </apex:repeat>
+            
+            </apex:pageBlockSection>
+        
+        </apex:pageBlock>
+        <hr/>    
+        <hr/>
+    </div>
+
+
+        
+    <body>
+
+    <!--
+    <div class="container">
+    
+        <apex:pageBlock title="">
+            
+            <apex:pageBlockSection columns="2" >
+                <apex:facet name="header">
+                    <span style="color:green;font-size:200%"><i><b>Referral Details</b></i></span>
+                    <br/>
+                    <br/>
+                </apex:facet>
+            </apex:pageBlockSection>
+            <apex:panelGrid columns="2"  styleClass="data" columnClasses="label,data"  border="0" width="100%">
+                <apex:pageBlockSection columns="1">
+                    <apex:repeat value="{!referralSummary.referralFieldsLeft}" var="key" >
+                        <hr/>
+                        <apex:outputfield value="{!referralSummary.referral[key]}" />
+                    </apex:repeat>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">            
+                    <apex:repeat value="{!referralSummary.referralFieldsRight}" var="key" >
+                        <hr/>
+                        <apex:outputfield value="{!referralSummary.referral[key]}" />
+                    </apex:repeat>              
+                </apex:pageBlockSection>
+            </apex:panelGrid>            
+            <hr/>
+        </apex:pageBlock>
+    </div>
+    -->
+
+    <div class="container">
+
+        <apex:pageBlock title="">
+            
+            <apex:pageBlockSection columns="2" >
+                <apex:facet name="header">
+                    <span style="color:green;font-size:200%"><i><b>Referral Details</b></i></span>
+                    <br/>
+                    <br/>
+                </apex:facet>
+            </apex:pageBlockSection>
+            <apex:panelGrid columns="2"  styleClass="data" columnClasses="fifty-percent top-alignment, fifty-percent top-alignment"  border="0" width="100%" >
+                <apex:pageBlockSection columns="1">
+                    <apex:repeat value="{!referralSummary.referralSectionFieldsLeft}" var="f" >
+                        <hr/>
+                        <apex:outputfield value="{!referralSummary.referral[f]}" />
+                    </apex:repeat>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">            
+                    <apex:repeat value="{!referralSummary.referralSectionFieldsRight}" var="f" >
+                        <hr/>
+                        <apex:outputfield value="{!referralSummary.referral[f]}" />
+                    </apex:repeat>              
+                </apex:pageBlockSection>
+            </apex:panelGrid>            
+            <hr/>
+        </apex:pageBlock>
+
+    </div>
+
+
+    
+    <div class="container">        
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <apex:facet name="header">
+                    <span style="color:green;font-size:200%"><i><b>Five Year Housing History</b></i></span>
+                </apex:facet>     
+                    <br/>   
+                 <apex:dataTable value="{!referralSummary.housingHistoryList}" var="h" border="2"  styleclass="table" >
+        
+                    <apex:repeat var="f" value="{!$ObjectType.Nomination_Tenancy__c.FieldSets.Housing_History_List}">
+                        <apex:column headerValue="{!f.label}">
+                            <apex:outputField value="{!h[f]}" />
+                        </apex:column>
+                    </apex:repeat>
+        
+        
+                </apex:dataTable>                                                
+           </apex:pageBlockSection>
+        </apex:pageBlock> 
+    </div>
+
+
+    <apex:pageblock title="Assessment Summary"  html-width="100%">
+       <apex:repeat value="{!referralSummary}" var="ref">
+
+            <apex:repeat value="{!ref.relatedGroupName}" var="grp">
+
+ <div class="container">
+                    <apex:repeat value="{!ref.relatedItems[grp]}" var="items">
+
+                       <apex:repeat value="{!items}" var="item"> 
+
+                          <apex:pageblocksection columns="1" >
+                                <apex:facet name="header">
+                                    <span style="color:green;font-size:200%"><i><b>{!sectionLabels[grp]}</b></i></span>
+                                    <br/>
+                                    <br/>
+                                </apex:facet>
+                           </apex:pageBlockSection>
+                           <br/>
+
+                           
+                             <apex:panelGrid columns="2"   styleClass="tableStyle" width="100%" columnClasses="fifty-percent,fifty-percent" rowClasses="rowstyle" >                         
+                                <apex:outputPanel style="display: inline-block"> 
+                                
+                                <apex:pageBlockSection columns="1"     >                                
+                                        
+                                    <apex:repeat value="{!referralSummary.relatedItemFieldMapLeft[item.Id]}" var="f">
+                                        
+                                        <hr/>
+                                        <div class="itemBlock">
+                                        <apex:outputField value="{!item[f]}" style="float:left;width: 200px;"    />
+                                        </div>
+                                    </apex:repeat>
+                                    
+                                </apex:pageBlockSection>
+                                
+                                </apex:outputPanel>
+                                
+                              
+                                <apex:outputPanel style="display: inline-block">
+                                
+                                <apex:pageBlockSection columns="1"  >
+                                   
+                                    <apex:repeat value="{!referralSummary.relatedItemFieldMapRight[item.Id]}" var="f">
+                                        
+                                        <hr/>
+                                        <div class="itemBlock">
+                                        <apex:outputField value="{!item[f]}"  />
+                                        </div>
+                                    </apex:repeat>
+                                   
+                                </apex:pageblockSection>
+                                
+                                </apex:outputPanel>
+                               
+                            </apex:panelGrid>
+    
+                            
+
+                </apex:repeat> 
+                  <!-- <hr/>  -->
+            </apex:repeat> 
+
+             
+      </div>  
+        </apex:repeat>
+          
+     </apex:repeat> 
+          <div class="footer" >
+        ......................................................................................
+    </div> 
+     </apex:pageblock>  
+    </body>
+ </div> 
+  
+</html>
+</apex:page>

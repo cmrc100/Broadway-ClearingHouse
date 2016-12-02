@@ -1,0 +1,27 @@
+<apex:page sidebar="false">
+
+    <h1 style="color:Red;
+    font-size:200%;">
+    
+        Hello {! $user.firstname & " " & $user.lastname}
+        <br></br>
+    </h1>
+    
+    <h2>
+        <br></br>
+        Welcome to Clearing House Online.
+        <br></br><br></br>
+    </h2> 
+    
+    <h2>
+        Please use the quick links on the left hand side to navigate Clearing House Online.
+    </h2>
+        <ul>
+          <li>My Caseload: to view your clients</li>
+          <li>My Transfers: for your transfers requests and those accepted on the waiting list</li>
+          <li>Team Caseload: to view your teams entire patch</li>
+          <li>Current Nominations: for all current nominations to your teams patch</li>
+        </ul>
+
+   
+</apex:page>

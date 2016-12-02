@@ -1,0 +1,27 @@
+<apex:page standardController="Referral__c">
+<style>
+a {
+    color: blue;
+    font-weight: bold;
+    font-size: 110%;
+}
+</style>
+
+<p>
+
+<Strong>Worker Declarations</Strong>
+
+I agree that all information stated in this referral is accurate and complete to the best of my knowledge.
+
+<br></br>
+<br></br>
+
+<Strong>Client Declarations</Strong>
+
+Please upload the signed client declaration below to confirm the client understands what service they are being referred for and how their information will be shared.
+
+</p>
+
+<a href="/servlet/servlet.FileDownload?file=01520000003WHqY" target="_blank">Clearing House Client Consent Form</a>
+
+</apex:page>

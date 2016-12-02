@@ -1,0 +1,566 @@
+<apex:page standardController="Nomination_Tenancy__c" extensions="WaitingListTableController" docType="html-5.0" StandardStylesheets="false" >
+
+   <head>
+        <apex:includescript value="//code.jquery.com/jquery-1.11.3.min.js" />
+        <apex:includescript value="//code.jquery.com/ui/1.11.3/jquery-ui.js" />
+                                   
+        <apex:includescript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.js" />
+        <!-- <apex:includescript value="//cdn.datatables.net/1.10.9/js/dataTables.jquery.js" /> -->
+        <apex:includescript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js" />
+        <apex:includescript value="//cdn.datatables.net/1.10.9/js/dataTables.jqueryui.js" />
+       
+        
+        
+        <apex:includeScript value="{!URLFOR($Resource.PQSelect, 'select-master/pqselect.dev.js')}"/>
+        
+
+        <apex:stylesheet value="{!URLFOR($Resource.PQSelect, 'select-master/pqselect.dev.css')}"/>
+        <apex:stylesheet value="//cdn.datatables.net/1.10.8/css/jquery.dataTables.min.css" />
+        <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/css/dataTables.jqueryui.css" />  
+
+        <style>
+        
+            .pq-select-popup-cont {
+                outline:block;
+             background: rgba(255,255,255,0.95);
+            }
+            
+            .paging_full_numbers a.paginate_button {
+                color: #fff !important;
+            }
+            .paging_full_numbers a.paginate_active {
+                color: #fff !important;
+            }
+            
+            #nav, #go{
+                float:right;
+                padding:10px;        
+            }
+            #nav label{
+                position: static;
+                text-align: right; 
+
+            }
+
+
+                        
+            div.container {
+                width: 80%;
+            }
+            .display td span{
+                max-width: 130px;
+                display: block;
+                overflow: hidden;
+                text-overflow:ellipsis;
+
+            }
+
+                        
+        </style>
+    </head>
+    
+    <body>
+    
+    <apex:form id="frm">
+        <apex:pageMessages id="msgs"/>
+        <c:ProcessSpinner MessageText="Saving, please wait ...." />
+        
+        <apex:actionFunction action="{!nominateReferrals}" name="nominateRef" reRender="msgs, frm"  status="processingStatus" oncomplete="window.top.location='/{!housing.id}'"  >
+            <apex:param assignTo="{!refIds}" id="refIds" name="refIds" value="" />
+        </apex:actionFunction>
+
+        <apex:commandButton value="Reset" style="width: 200px;"/>
+<!--        <button id="sortReset">Reset sort</button>   -->
+        
+        <div id="nav">
+            <!--
+            <apex:selectList id="waitingCategory" size="1" multiselect="false" value="{!housing.Waiting_list_category__c}">
+                <apex:selectOptions value="{!waitingCategories}" />    
+            </apex:selectList>
+            -->
+            
+           <!--<select id='waitingCategory2" + idx + ' multiple="true"><option value=""></option></select> -->
+            <label for="waitingCategory2" class="wclabel">Waiting Category</label>
+            <select name="waitingCategory" multiple="true" size="1" id="waitingCategory" onchange="runCategorySearch(this);"> 
+            </select>
+            <br/><br/>
+            <label for="categoryIndex" class="idxlabel">Category Index</label>
+            <select name="categoryIndex" multiple="true" size="1" id="categoryIndex" onchange="runIndexSearch(this);"> 
+            </select>
+            
+            <script>
+              var optionsList = [];
+              var indexList = [];
+            </script>
+            <apex:repeat value="{!WaitingCategories}" var="w"> 
+                <script> 
+                    optionsList.push('{!w}');
+                </script>             
+            </apex:repeat>
+            <apex:repeat value="{!CategoryIndexes}" var="i"> 
+                <script> 
+                    indexList.push('{!i}');
+                </script>             
+            </apex:repeat>   
+        </div>
+        
+         
+        <br/> <br/>
+        <table id="theTable" class="display">
+            <apex:outputText value="{!tableHtml}" escape="false"> </apex:outputText>
+        </table>
+        <div style="clear:both"></div>
+        <div id="go">
+            <apex:commandButton value="Nominate" onclick="nominate(); return false;" />
+        </div>
+             
+    </apex:form>
+    
+    </body> 
+
+     
+        
+        <script type="text/javascript">
+        
+            j$ = jQuery.noConflict();
+            var filters = new Array();
+            var theTable;
+
+            // Array holding selected row IDs
+            var rows_selected = [];
+            var rowsChkd = [];  
+            
+            var categoryIdx = 0;
+            var cidx = 11;
+               
+            j$(document).ready( function () {
+
+                                  
+                theTable = j$('[id$="theTable"]').DataTable({
+                    //'stateSave': true,
+                    //order: [[0, 'asc']],
+                    'orderCellsTop': true,
+                    'paging':   true,  // Table pagination
+                    'ordering': true,  // Column ordering 
+                    'info':     true,  // Bottom left status text
+                    'bAutoWidth':     true,  // Bottom left status text
+                    'bUseRendered':    false,
+                    "aaSorting": [],
+                    'scrollX': true,
+                    'search': {
+                        "caseInsensitive": false
+                     },
+                    //'sPaginationType': 'full_numbers',
+
+                    initComplete: function () {
+                        
+                        var i = 0;
+                        var cols= JSON.parse('{!AllColumns}');
+var xyz = 0;
+                        this.api().columns().every( function () {
+
+                            var column = this;
+xyz = xyz + 1;
+console.log(xyz);
+                            var idx = j$(this.header()).index();                         
+                            var filter = '';
+                            var defaultVal = '';
+                            var defaultList = [];
+                            var label = '';
+                            var visible = true;
+                            var options = new Array();
+                            var colWidth = 100;
+console.log(' @@@ idx and label ... ' + idx + ' - ' +  cols[idx].label);                           
+                            try {
+                                if (cols[idx] != null){
+                                    filter = cols[idx].filterable;
+                                    defaultVal = cols[idx].defaultSearch;
+                                    options = cols[idx].optionsList;
+                                    label = cols[idx].label;
+                                    visible = cols[idx].visible;
+                                    colWidth = cols[idx].colWidth;
+                                }
+                            } catch (e){
+                                label = '';
+                            }
+ 
+                            if (!visible && label == 'Waiting Category'){
+                                this.visible(false);
+                                categoryIdx = idx;
+                            }
+
+                            if (!visible && label == 'Category Index'){
+                                this.visible(false);
+                                cidx = idx;
+                            }
+                             
+                            if (filter) { // define which columns have filters
+                                var select = j$('<select id=col' + idx + ' multiple><option value=""></option></select>')
+                                    .appendTo( j$(column.header()) )
+                                    .on( 'change', function () {
+                                        var val = j$(this).val();
+                                        searchColumn(val, column);                                   
+                                    } )
+
+                                  
+                                // loop through available options
+                                if (defaultVal) {
+
+                                    defaultList = [];
+                                    defaultList = defaultVal.split(';');
+//console.log('defaultVal  ' + defaultVal);
+                                    if (defaultList.length > 1){
+                                        for (i = 0; i < defaultList.length; i++){
+                                            select.append( '<option value="'+defaultList[i]+'" selected>'+defaultList[i]+'</option>' );
+                                        } 
+                                        filters.push(idx);
+                                    } else {                                 
+                                        select.append( '<option value="'+defaultVal+'" selected>'+defaultVal+'</option>' );
+                                        filters.push(idx);
+                                    }
+                                }
+                                if (options){
+                                    for (i = 0; i < options.length; i++){
+                                        if (options[i] != defaultVal){
+                                            select.append( '<option value="'+options[i]+'" >'+options[i]+'</option>' );
+                                        }    
+                                    }
+                                        
+                                } else {                                  
+                                    column.data().unique().sort().each( function ( d, j ) {
+                                        var d2 = '';
+
+                                        d2 = d.replace('<span>', "");
+                                        d2 = d2.replace('</span>', "");
+                                        d2 = d2.substring(1, d2.length - 1);                                        
+//console.log('@@@@@ d2 and defaultVal... ' + d2 + d2.trim().length + typeof d2 + ' ============ ' + defaultVal + defaultVal.length + typeof defaultVal);                                                                             
+                                        if (d2 === defaultVal){ // pre default filter selection                                    
+                                            //select.append( '<option value="'+d+'" selected>'+d+'</option>' );
+                                            //filters.push(idx);
+console.log('~~~~~~~~~~~~  Matched .... ' + d2);                                            
+                                        } else {
+                                            if (defaultList.length > 1){
+                                                var exists = false;
+                                                for (i = 0; i < defaultList.length; i++){
+                                                    if (defaultList[i] == d2){
+                                                        exists = true;
+                                                        break;
+                                                    }                                                                                           
+                                                    
+                                                } 
+                                                if (!exists){
+                                                    select.append( '<option value="'+d+'" >'+d+'</option>' );
+                                                }
+                                            } else {
+                                            
+                                                if (d2 != defaultList){
+                                                    select.append( '<option value="'+d+'" >'+d+'</option>' );
+                                                }
+                                            }
+                                                
+                                                
+                                        }
+                                    }  );
+                                }
+                             
+                            
+                                select.pqSelect( { checkbox: true, 
+                                                    multiplePlaceholder: 'Filter..', 
+                                                    maxDisplay: 1, 
+                                                    deselect: true, 
+                                                    search : false, 
+                                                    width: colWidth, 
+                                                    bootstrap: { on: true } }  );
+                            
+                            } // end of if idx (columns with filters)
+                                            
+                            i++; 
+                        
+                        } ); // end of loop through each column
+
+
+                        var select2 = j$('[id$="waitingCategory"]');
+                        var housingCategories = [];
+                        housingCategories = "{!housing.Waiting_list_category__c}".split(';');
+                    
+                        for (var i=0; i < optionsList.length; i++){
+                            var selected = "false";
+                            var o = optionsList[i];
+                            for (var j=0; j < housingCategories.length; j++){
+                                if (o == '\b' + housingCategories[j] + '\b'){                        
+                                    selected = "true";
+                                    break;
+                                }
+                            }
+                            if (selected == "true") {            
+                                select2.append('<option value="'+ o +'" selected>'+ o +'</option>' );
+                            } else {
+                                select2.append('<option value="'+ o +'" >'+ o +'</option>' );
+                            }
+                        }        
+                    
+                    
+                        select2.pqSelect( { checkbox: true, 
+                                                            multiplePlaceholder: 'Filter options ..', 
+                                                            maxDisplay: 1, 
+                                                            deselect: true, 
+                                                            search : false, 
+                                                            width: 90, 
+                                                            bootstrap: { on: true} }  );
+                                                            
+                                                            
+                        var select3 = j$('[id$="categoryIndex"]');
+                        var categoryIndexes = [];
+                        categoryIndexes = "{!housing.Index__c}".split(';');
+                    
+                        for (var i=0; i < indexList.length; i++){
+                            var selected = "false";
+                            var o = indexList[i];
+                            for (var j=0; j < categoryIndexes .length; j++){
+                                if (o == '\b' + categoryIndexes [j] + '\b'){                        
+                                    selected = "true";
+                                    break;
+                                }
+                            }
+                            if (selected == "true") {            
+                                select3.append('<option value="'+ o +'" selected>'+ o +'</option>' );
+                            } else {
+                                select3.append('<option value="'+ o +'" >'+ o +'</option>' );
+                            }
+                        }        
+                    
+                    
+                        select3.pqSelect( { checkbox: true, 
+                                                            multiplePlaceholder: 'Filter options ..', 
+                                                            maxDisplay: 1, 
+                                                            deselect: true, 
+                                                            search : false, 
+                                                            width: 90, 
+                                                            bootstrap: { on: true} }  );                                                              
+
+                    },  // end of Init function                  
+
+                }); // end of table def
+                
+            
+                                
+              // Handle click on checkbox
+               j$('#theTable tbody').on('click', 'input[type="checkbox"]', function(e){
+                  var j$row = j$(this).closest('tr');
+            
+                  // Get row data
+                  var data = theTable.row(j$row).data();
+            
+                  // Get row ID
+                  var rowId = data[1];
+        
+                  // Determine whether row ID is in the list of selected row IDs 
+                  var index = j$.inArray(rowId, rows_selected);
+            
+                  // If checkbox is checked and row ID is not in list of selected row IDs
+                  if(this.checked && index === -1){
+                     rows_selected.push(rowId);
+                     rowsChkd.push(j$row);
+            
+                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+                  } else if (!this.checked && index !== -1){
+                     rows_selected.splice(index, 1);
+                     rowsChkd.splice(index, 1);
+                  }
+            
+                  if(this.checked){
+                     j$row.addClass('selected');
+                  } else {
+                     j$row.removeClass('selected');
+                  }
+            
+                  // Prevent click event from propagating to parent
+                  e.stopPropagation();
+                });
+          
+                runDefaultFilters();
+
+                j$("[rel=tooltip]").tooltip();
+                
+                // trigger hidden column searches           
+                var select2 = j$('[id$="waitingCategory"]');
+                select2.trigger('onchange');                
+
+                var select3 = j$('[id$="categoryIndex"]');
+                select3.trigger('onchange');  
+                
+                /* Apply the tooltips */
+//                theTable.j$('tr').tooltip( {
+//                    "delay": 0,
+//                    "track": true,
+//                    "fade": 250
+//                } );
+                
+                j$(".pq-select-popup-cont panel panel-default").blur(
+                    function (event) {
+                         console.log('@@@Selected .... ');
+                         
+                     }
+                );                         
+                     
+            }); // end of document.ready()
+
+                                            
+            function runDefaultFilters(){
+            
+                for (i = 0; i < filters.length; i++){
+              
+                    var colId = 'col' + filters[i];
+
+                    var column = theTable.column(filters[i]);                   
+                    var val = j$('[id$="' + colId + '"]').val();
+
+                    if (typeof val != 'undefined'){
+                        searchColumn(val, column);
+                    }
+                }                 
+            }
+            
+            function runCategorySearch(sel){
+               
+                var opts = [],
+                opt;
+                var len = sel.options.length;
+                var val = [];
+                for (var i = 0; i < len; i++) {
+                    opt = sel.options[i];
+
+                    if (opt.selected) {
+                        opts.push(opt);
+                        val.push (opt.value);
+                    }
+                }
+
+                var column = theTable.column(categoryIdx);                   
+console.log(' Category Idx column .....   ' + categoryIdx + ' searching ... ' + val);                
+                if (typeof val != 'undefined'){
+                    searchColumn(val, column);
+                }
+            
+            }
+
+            function runIndexSearch(sel){
+               
+                var opts = [],
+                opt;
+                var len = sel.options.length;
+                var val = [];
+                for (var i = 0; i < len; i++) {
+                    opt = sel.options[i];
+
+                    if (opt.selected) {
+                        opts.push(opt);
+                        val.push (opt.value);
+                    }
+                }
+                var column = theTable.column(cidx);                   
+console.log('Index  Idx column .....   ' + cidx + ' searching ... ' + val);              
+                if (typeof val != 'undefined'){
+                    searchColumn(val, column);
+                }
+            
+            }
+                                  
+            function searchColumn(val, column){
+            
+                var searchVal = '';
+                if (val != null) {
+
+                
+                    for (x=0; x < val.length; x++){
+                        searchVal +=  val[x]  + '|';                        
+                        searchVal = searchVal.replace('<span>', '');
+                        searchVal = searchVal.replace('</span>', '');
+                        
+                    }
+                    searchVal = searchVal.substring(0, searchVal.length - 1);
+                     
+                    var chk = searchVal.substring(0,1);
+                    if(chk == '|'){
+                        searchVal = searchVal.substring(1, searchVal.length);
+                    }
+                    console.log(' @@@@@@@@@@@@@@@@@@@@@@@@   ');
+                    console.log(searchVal);
+                    console.log(typeof searchVal);
+                }
+
+                    
+                column                    
+                    //.search( searchVal ? '^'+ searchVal +'$' : '', true, false )
+                    .search(searchVal , true,false, false )
+                    .draw();            
+            
+            }
+            
+            function nominate(){
+
+                var id;
+                var name = '';
+                var name2 = '';
+                var ref = '';
+                var ref2 = '';
+                var couple;
+                var max = 1;
+                var sel = [];
+                
+                for (var i = 0; i< rowsChkd.length; i++){
+                   var j$row = rowsChkd[i];
+                   var id = j$row.find ('input[type="checkbox"]:checked').attr('id');
+                   j$tds = j$row.find("td:nth-child(1)");
+                   if (sel.length == 1){
+                      name2 = j$tds.text(); 
+                   } else {
+                      name = j$tds.text();
+                   }
+                   
+                   j$tds = j$row.find("td:nth-child(2)");
+                   
+                   if (sel.length == 1){
+                       ref2 = j$tds.text(); 
+                   } else {
+                       ref = j$tds.text();
+                   }
+                   sel.push(id);                
+                };
+
+                if("{!housing.Couples_accepted__c}" == "Yes"){
+                    max = 2;
+                }
+
+                
+                if (sel.length > max){
+                    alert ('You have selected too many referrals, please review');
+                
+                } else {
+                    
+                    var refIds = ''
+                    for (var i = 0; i < sel.length; i++){
+                        refIds += sel[i] + ',';
+                    }
+                    refIds = refIds.substring(0, refIds.length - 1);
+                                  
+                    if (sel.length == 1) {
+                        if (confirm('Please confirm that you would like to nominate ' + name + ' - ' + ref + ' to Bedspace {!housing.Bedspace__r.Name}' )){
+                            nominateRef(refIds);                            
+                        }
+                    }
+                    if (sel.length == 2) {
+                        if (confirm('COUPLE NOMINATION \r\n \r\n Please confirm that you would like to nominate ' + name + ' - ' + ref + ' and ' + name2 + ' - ' + ref2 
+                                                    + ' as a couple to Bedspace {!housing.Bedspace__r.Name}' )){
+                            nominateRef(refIds);                            
+                        }
+                    }                    
+                }            
+            
+            }
+            
+ 
+            
+        </script>
+        
+</apex:page>

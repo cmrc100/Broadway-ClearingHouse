@@ -1,0 +1,7 @@
+<apex:page standardController="Nomination_Tenancy__c">
+<p><font size="5">
+    <strong><font color="eb5f26"> Nomination Request Submitted:</font></strong>
+    <strong> </strong>
+    The Clearing House will be in touch within the 3 working days.
+</font></p>
+</apex:page>

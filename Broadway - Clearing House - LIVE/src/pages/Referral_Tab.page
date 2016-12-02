@@ -1,0 +1,17 @@
+<apex:page action="{!if($Profile.Name !='System Administrator', 
+    null, 
+    urlFor($Action.Referral__c.Tab, 
+    $ObjectType.Referral__c,
+    null, true))}"
+    
+  standardController="Referral__c"
+  recordSetVar="referral"
+  tabStyle="Referral__c" 
+  showHeader="true" 
+  tabstyle="Referral__c" 
+  title="Referrals">
+
+
+<apex:sectionheader title="Referrals" subtitle="Home"></apex:sectionheader>
+    <apex:ListViews type="Referral__c" />
+</apex:page>

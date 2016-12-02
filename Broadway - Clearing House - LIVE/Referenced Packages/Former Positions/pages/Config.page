@@ -1,0 +1,15 @@
+<apex:page title="Former Positions Configuration">
+
+<apex:sectionHeader title="Former Positions"/>
+
+<apex:pageBlock title="">
+
+  <h1>Thank you for installing Former Positions</h1>
+  <br/>
+  <br/>
+
+ For help with Former Positions, please visit <a href=" http://ic.force.com/formerpositions"> http://ic.force.com/formerpositions</a>
+
+</apex:PageBlock>
+
+</apex:page>
